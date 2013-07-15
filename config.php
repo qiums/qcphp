@@ -66,7 +66,7 @@ $config = array(
 	),
     // Cookie
     'cookie' => array(
-        'prefix' => '9f2d_',
+        'prefix' => 'q9Ae_',
         'encrypt_func' => 'authcode', //加密函数
         'domain' => '',
         'path' => '',
@@ -82,7 +82,6 @@ $config = array(
 		'extension' => '.html',
         'theme' => '',
         'cachepath' => CACHE_PATH. 'views'.DS,
-		'viewpath' => CORE_PATH. 'views'. DS,
 	),
 );
 ?>

@@ -747,6 +747,26 @@ class response{
 			header("HTTP/1.1 {$code} {$text}", TRUE, $code);
 		}
 	}
+	static public function get_header_info($header='',$echo=true)
+    {
+        ob_start();
+        $headers   = getallheaders();
+        if(!empty($header)) {
+            $info = $headers[$header];
+            echo($header.':'.$info."\n"); ;
+        }else {
+            foreach($headers as $key=>$val) {
+                echo("$key:$val\n");
+            }
+        }
+        $output = ob_get_clean();
+        if ($echo) {
+            echo (nl2br($output));
+        }else {
+            return $output;
+        }
+
+    }
 }
 class Debug{
 	static $debug = array();

@@ -1,4 +1,4 @@
-<?php if ( ! defined('SYS_PATH')) exit('No direct script access allowed');
+<?php if ( ! defined('ROOT')) exit('No direct script access allowed');
 !defined('DS') AND define ('DS', DIRECTORY_SEPARATOR);
 
 !defined('SELF') AND define('SELF', pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_BASENAME));
@@ -154,7 +154,7 @@ class Base {
 				}
 			}
 		}
-		if (is_object($o)){dump($o);
+		if (is_object($o)){
 			$o->config = $value;
 			return ;
 		}

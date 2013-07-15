@@ -15,8 +15,7 @@ class Lib_qctpl {
 		if (!is_null($theme = cookie::get('theme'))) $this->theme = $theme;
 		if (!$this->viewpath) $this->viewpath = CORE_PATH. 'views'.DS;
 		$this->dir = defined('GROUP_PATH') ? gc('env.group') : gc('env.directory');
-		if ($this->pkey['gpath']) $this->cachepath .= $this->pkey['gpath']. DS;
-		if ($this->pkey['dir']) $this->cachepath .= $this->pkey['dir']. DS;
+		if ($this->dir) $this->cachepath .= $this->dir. DS;
 		return $this;
 	}
 	public function template($name, $cachename=''){

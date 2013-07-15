@@ -88,23 +88,23 @@ class model{
 		$this->db()->where($key, $value);
 		return $this;
 	}
-	public function count($table=''){
+	public function count(){
 		$this->before();
 		return $this->db()->count($this->maintab);
 	}
-	public function find($table='', $cond=array()){
-		$this->before($table);
+	public function find($cond=array()){
+		$this->before();
 		if ($cond) $this->db()->where($cond);
 		$data = $this->db()->find($this->maintab);
 		$this->attr_cache = array();
 		return $data;
 	}
-	public function findAll($table=''){
+	public function findAll(){
 		if (is_numeric($table)){
 			$this->attr('datatype', $table);
 			$cond = array();
 		}
-		$this->before($table);
+		$this->before();
 		if ($cond) $this->db()->where($cond);
 		$data = $this->db()
 			->attr('pk', $this->gc('data_pk', 'id'))
@@ -165,8 +165,9 @@ class model{
 		$this->attr_cache = array();
 		return $id;
 	}
-	public function setInc($key,$cond=array(),$num=1,$table=''){
-		return $this->update(array($key=>"[+]{$num}"), $cond, $table);
+	public function setInc($key, $num=1, $table=''){
+		if ($table) $this->maintab = $table;
+		return $this->update(array($key=>"[+]{$num}"));
 	}
 	public function delete($cond=''){
 		$this->before();
