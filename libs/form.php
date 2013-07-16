@@ -29,8 +29,10 @@ class Lib_form{
 			if (!$args['type'])	continue;
 			$true_name = FALSE!==($index = strpos($name, '.')) ? substr($name, $index+1) : $name;
 			if (!$args['label']) $args['label'] = lang("form_label.{$true_name}");
-			$value = isset($db_data[$true_name]) ? $db_data[$true_name] : (1===$this->mode ? '' : $args['value']);
-			$element = $this->element($name, $args['type'], $args['attr'], $value, $args['option'], $args['label']);
+			$alias = isset($args['alias']) ? $args['alias'] : $true_name;
+			$value = isset($db_data[$alias]) ? $db_data[$alias] : (1===$this->mode ? '' : $args['value']);
+			$element = $this->element(array('true_name'=>$true_name, 'name'=>isset($args['alias'])?$args['alias']:$name)
+				, $args['type'], $args['attr'], $value, $args['option'], $args['label']);
 			$tips = lang("form_tip.{$true_name}");
 			preg_match_all('/(minlength|maxlength)(\=\")*(\d+)/is', $args['attr'], $m);
 			if ($m[1]){
@@ -79,11 +81,14 @@ class Lib_form{
 		return $this;
 	}
 	public function element($name, $type, &$attr='', $value='', $option='',$label=''){
-		$true_name = $name;
-		if (FALSE!==($index = strpos($name, '.'))){
-			$true_name = substr($name, $index+1);
-			$name = (1!==$this->mode) ? "sd_{$true_name}" : $true_name;
-			//$name = 'sub['. substr($name, 0, $index). ']['. $true_name. ']';
+		if (is_array($name)){
+			extract($name);
+		}else{
+			$true_name = $name;
+			if (FALSE!==($index = strpos($name, '.'))){
+				$true_name = substr($name, $index+1);
+				$name = (1!==$this->mode) ? "sd_{$true_name}" : $true_name;
+			}
 		}
 		list($tag, $type) = explode(':', "{$type}:ele");
 		$prefix = (FALSE!==strpos('select,textarea', $tag) ? $tag : str_replace(':', '-', $type));

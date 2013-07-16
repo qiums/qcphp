@@ -9,8 +9,8 @@ function AIKE($array1, $array2){
 function AIV($array1, $array2, $pre=', '){
 	return array_intersect_value($array1, $array2, $pre);
 }
-function QCS($data, $name='name'){
-	return qcsort($data, $name);
+function QCS($data, $id_name='id', $parent_name='pid'){
+	return qcsort($data, $id_name, $parent_name);
 }
 function QCAS($data, $new=array()){
 	return qcarray_sort($data, $new);
@@ -44,7 +44,7 @@ function qcsort($data, $id_name='id', $parent_name='pid'){
 	//定义索引数组，用于记录节点在目标数组的位置
 	$ind = array();
 	$nextar = array(); // 保存末定义的父节点的节点.
-	$tmp = current($data);
+	//$tmp = current($data);
 	foreach($data as $v) {
 		$v['child'] = array(); //给每个节点附加一个child项
 		$pid = $v[$parent_name];

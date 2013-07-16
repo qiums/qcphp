@@ -43,8 +43,12 @@ class model{
 		}
 		return $o;
 	}
-	public function property($name, $value){
-		if (property_exists($this, $name)){
+	public function property($name, $value=NULL){
+		if (is_array($name)){
+			foreach ($name as $key=>$value){
+				$this->property($key, $value);
+			}
+		}elseif (property_exists($this, $name)){
 			$this->$name = $value;
 		}
 		return $this;
@@ -269,8 +273,9 @@ class model{
 		$base = Base::getInstance();
 		$cond = $mode = array();
 		if (!$post) $post = $base->qdata;
+		if (!$post OR !$fields) return array();
 		foreach ($fields as $key=>$one){
-			$name = basename(str_replace('.', '/', $key));
+			$name = isset($one['alias']) ? $one['alias'] : basename(str_replace('.', '/', $key));
 			$val = isset($post[$name]) ? $post[$name] : NULL;
 			if (!is_null($val) AND isset($one['pattern'])) $val = str_replace(':', $val, $one['pattern']);
 			if (is_numeric($one['search'])){

@@ -100,6 +100,7 @@ class Dispatch{
 			gc("env.{$key}", (string)$_GET[gc('dispatch.'. $val)], TRUE);
 			unset($_GET[gc('dispatch.'. $val)]);
 		}
+		gc('env.groupdir', defined('GROUP_PATH') ? gc('env.group') : gc('env.directory'), TRUE);
 	}
 	static private function set_group($c = NULL){
 		if (!$c) $c = gc('dispatch.default_group');

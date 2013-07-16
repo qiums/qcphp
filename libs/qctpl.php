@@ -177,11 +177,17 @@ class QCtplTags {
 			$as = 'one';
 			$name = ('data'===$type) ? $as : 'blockv';
 		}
+		if (isset($params['property'])){
+			$property = $params['property'];
+			unset($params['property']);
+		}
 		$code = '<?php $'.$name. '=';
 		if (isset($params['sql'])){
 			$code .= ' Db::getInstance()->'. ('list'===$type ? 'limit(1)' : ''). 'run("'. $params['sql']. '");';
 		}elseif (count($params)===1){
-			$code .= ' $this->'. key($params). '->block("'.$type.'", "'. current($params). '");';
+			$code .= ' $this->'. str_replace('.', '->', key($params));
+			if ($property) $code .= '->property(str2array("'. $property. '"))';
+			$code .= '->block("'.$type.'", "'. current($params). '");';
 		}
 		if ('list'===$type){
 			$code .= '$'.$as.'_index=0; if (is_array($'. $name. ')): foreach ($'.$name . ' as $'. $as. '): $'.$as.'_index++; ?>';
