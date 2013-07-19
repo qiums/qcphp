@@ -90,13 +90,14 @@ function get_from_string($string, $suffix=',', $start=0){
 	if ('end'===$start) $start = count($string)-1;
 	return isset($string[$start]) ? $string[$start] : NULL;
 }
-
+//在$haystack中查找$needle元素
 function cstrpos($haystack, $needle){
 	if (!is_scalar($haystack) OR !is_scalar($needle)) return FALSE;
 	$haystack = ",{$haystack},";
 	$needle = ",{$needle},";
 	return strpos($haystack, $needle);
 }
+// 在$string中查找数组$arr中的元素
 function qstrpos($string, &$arr, $returnvalue = FALSE) {
 	if(empty($string)) return FALSE;
 	foreach((array)$arr as $v) {
@@ -106,6 +107,13 @@ function qstrpos($string, &$arr, $returnvalue = FALSE) {
 		}
 	}
 	return FALSE;
+}
+//
+function qstrstr($haystack, $needle=',', $before_needle=FALSE){
+	$index = strpos($haystack, $needle);
+	if ($index===FALSE) return $haystack;
+	if (!$before_needle === FALSE || '5.3.0' <= gc('env.phpver')) return ltrim(strstr($haystack, $needle, $before_needle), $needle);
+	return substr($haystack, 0, $index);
 }
 function auto_charset($cont, $from='utf-8', $to=''){
 	if(empty($to)) $to	= gc('base.charset');
