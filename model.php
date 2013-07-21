@@ -103,9 +103,9 @@ class model{
 		$this->attr_cache = array();
 		return $data;
 	}
-	public function findAll(){
-		if (is_numeric($table)){
-			$this->attr('datatype', $table);
+	public function findAll($cond=array()){
+		if (is_numeric($cond)){
+			$this->attr('datatype', $cond);
 			$cond = array();
 		}
 		$this->before();

@@ -229,7 +229,7 @@ class controller extends Base{
 			}else{
 				$gzip = gc('base.gzip_output');
 				if ($gzip AND function_exists('ob_gzhandler')) {
-					ob_start("ob_gzhandler");
+					if (!headers_sent()) ob_start("ob_gzhandler");
 				}
 				require $this->tpl->view($file);
 			}

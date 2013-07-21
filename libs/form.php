@@ -12,6 +12,7 @@ class Lib_form{
 	private $append_html = array();
 	private $cache_data = array();
 	private $mode = 0;
+	private $groupid = NULL;
 
 	public function render($form_data=array(), $db_data=array(), $mode=0){
 		if ($form_data) $this->form_data = $form_data;
@@ -26,7 +27,7 @@ class Lib_form{
 		$this->mode = $mode;
 		$form = array();
 		foreach ($this->form_data as $name=>$args){
-			if (!$args['type'])	continue;
+			if (!$args['type'] OR (!is_null($this->groupid) AND $args['group'] != $this->groupid))	continue;
 			$true_name = FALSE!==($index = strpos($name, '.')) ? substr($name, $index+1) : $name;
 			if (!$args['label']) $args['label'] = lang("form_label.{$true_name}");
 			$alias = isset($args['alias']) ? $args['alias'] : $true_name;
@@ -51,6 +52,7 @@ class Lib_form{
 		$this->idpre = 'qc';
 		$this->form_data = array();
 		$this->mode = 0;
+		$this->groupid = NULL;
 		return $form;
 	}
 	public function data($ctrl, $name){
@@ -80,15 +82,19 @@ class Lib_form{
 		}
 		return $this;
 	}
+	public function group($k=0){
+		$this->groupid = $k;
+		return $this;
+	}
 	public function element($name, $type, &$attr='', $value='', $option='',$label=''){
 		if (is_array($name)){
 			extract($name);
 		}else{
 			$true_name = $name;
-			if (FALSE!==($index = strpos($name, '.'))){
-				$true_name = substr($name, $index+1);
-				$name = (1!==$this->mode) ? "sd_{$true_name}" : $true_name;
-			}
+		}
+		if (FALSE!==($index = strpos($name, '.'))){
+			$true_name = substr($name, $index+1);
+			$name = (1!==$this->mode) ? "sd_{$true_name}" : $true_name;
 		}
 		list($tag, $type) = explode(':', "{$type}:ele");
 		$prefix = (FALSE!==strpos('select,textarea', $tag) ? $tag : str_replace(':', '-', $type));
@@ -96,7 +102,6 @@ class Lib_form{
 		if (FALSE === strpos('checkbox,radio', $type)){
 			$this->add_type($attr, 'class', 'elelayout form-'. $prefix, TRUE);
 			$this->add_type($attr, 'placeholder', lang("placeholder.{$true_name}"));
-			unset($class);
 		}
 		$this->add_type($attr, 'data-alt', lang("form_alt.{$true_name}"));
 		if ('[now]' === $value) $value = D::cdate();
@@ -340,7 +345,7 @@ class Lib_form{
 			$key = str2array($key);
 			$class = 'c.'===$pre ? Base::getInstance()->cp->load(key($key)) : Base::getInstance()->load->model(key($key));
 			if ($class){
-				$ac = array_unshift($key);
+				$ac = array_shift($key);
 				if (method_exists($class, $ac)) return $class->$ac($key);
 			}
 			return array();

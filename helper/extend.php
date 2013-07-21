@@ -112,7 +112,8 @@ function qstrpos($string, &$arr, $returnvalue = FALSE) {
 function qstrstr($haystack, $needle=',', $before_needle=FALSE){
 	$index = strpos($haystack, $needle);
 	if ($index===FALSE) return $haystack;
-	if (!$before_needle === FALSE || '5.3.0' <= gc('env.phpver')) return ltrim(strstr($haystack, $needle, $before_needle), $needle);
+	if ('5.3.0' <= gc('env.phpver')) return ltrim(strstr($haystack, $needle, $before_needle), $needle);
+	if (!$before_needle) return ltrim(strstr($haystack, $needle), $needle);
 	return substr($haystack, 0, $index);
 }
 function auto_charset($cont, $from='utf-8', $to=''){
