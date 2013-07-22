@@ -149,6 +149,7 @@ class Lib_form{
 				return $str;
 			}else{
 				if ('file'===$type){
+					$this->htmlflag['file'] = TRUE;
 					$type = 'text';
 					$this->add_type($attr, 'class', 'qcfile');
 				}
