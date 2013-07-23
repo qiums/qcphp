@@ -119,6 +119,7 @@ class QCtplTags {
 		$const_regexp = "([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)";
         $cont = preg_replace("/(src|href|action)=\"(.[^\"]*)\"/ise", "self::parse_path('\\1', '\\2')", $cont);
         $cont = preg_replace("/(background)=\"(.[^\{\"\<]*)\"/ise", "self::parse_path('background', '\\2')", $cont);
+		$cont = preg_replace('/<form[^>]+?>/is', '\\0<input type="hidden" name="token" value="{$config[env][token]}" />', $cont);
         $cont = preg_replace("/\<\!\-\-\{(.+?)\}\-\-\>/s", "{\\1}", $cont);
 		$cont = preg_replace("/[\n\r\t]*\{(".$var_regexp."\s*\=\s*)*include\s+\'(.+?)\'\}[\n\r\t]*/ies", "self::parse_include('\\5', '\\3')", $cont);
         $cont = str_replace("{LF}", "<?=\"\\n\"?>", $cont);
@@ -133,7 +134,7 @@ class QCtplTags {
 					"self::stripv_tags('<?php \\2_index=0; if(isset(\\1) && is_array(\\1)): foreach(\\1 as \\2): \\2_index++; ?>','\\3<?php endforeach; endif; ?>')", $cont);
 			$cont = preg_replace("/[\n\r\t]*\{loop\s+(\S+)\s+(\S+)\s+(\S+)\}[\n\r\t]*(.+?)[\n\r\t]*\{\/loop\}[\n\r\t]*/ies",
 					"self::stripv_tags('<?php \\3_index=0; if(isset(\\1) && is_array(\\1)): foreach(\\1 as \\2 => \\3): \\3_index++; ?>','\\4<?php endforeach; endif; ?>')", $cont);
-			$cont = preg_replace("/([\n\r\t]*)([^\{]+)\{if\s+(.+?)\}([\n\r]*)(.+?)([\n\r]*)([^\{])\{\/if\}([\n\r\t]*)/ies",
+			$cont = preg_replace("/([\n\r\t]*)([^\{])\{if\s+(.+?)\}([\n\r]*)(.+?)([\n\r]*)([^\{])\{\/if\}([\n\r\t]*)/ies",
 					"self::stripv_tags('\\1\\2<?php if(\\3): ?>\\4','\\5\\6\\7<?php endif; ?>\\8')", $cont);
 		}
         /* Template Tag Parse */
@@ -198,7 +199,7 @@ class QCtplTags {
 		if (!function_exists($fn)) return '';
 		$args = self::stripv_tags(self::parse_quote($args, 2), $bool);
 		if (FALSE === strpos($args, '(')) $args = "(\"{$args}\")";
-		return $pre. '<?php echo '.$fn. $args . '; ?>';
+		return stripslashes($pre). '<?php echo '.$fn. $args . '; ?>';
 	}
     static private function parse_path($attr, $path){
 		if ('{'== $path{0} OR '[' == $path{0}

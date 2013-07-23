@@ -214,9 +214,11 @@ class controller extends Base{
 		//$_ENV['hooks']->callhook('pre_display');
 		Debug::setbm('pre_display');
 		global $config, $lang;
-		if ($_ENV['ajaxreq'] && 'html' !== $_ENV['ajaxdtype']){
+		if ($_ENV['ajaxreq'] && 'html' !== $_ENV['datatype']){
 			$this->output();
 		}else{
+			$this->load->helper('extend');
+			$config['env']['token'] = formhash();
 			$G = $this->qdata;
 			unset($_POST);
 			extract($this->vars);
