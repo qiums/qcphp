@@ -19,7 +19,6 @@ $config = array(
 		'libclass_prefix' => 'Lib_',
 		'widgetclass_prefix' => 'Widget_',
 		'subclass_prefix' => 'QC_',
-		'encryption_key' => '633c0bef',
 		'language' => 'zh-cn',
         'charset' => 'UTF-8',
         'encryption_key' => 'e981bd37',

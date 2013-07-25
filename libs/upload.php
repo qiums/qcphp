@@ -7,7 +7,7 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 @set_time_limit(5 * 60);
 
-class Lib_qcupload{
+class Lib_upload{
 	private $cleanup_tmpdir = true; // Remove old files
 	private $maxFileAge = 3600; // Temp file age in seconds
 	private $tmpfile;
@@ -19,11 +19,10 @@ class Lib_qcupload{
 	public $filename;
 	public $custom_path;
 
-	function init($args=''){
-		set_class_property(&$this, $GLOBALS['config']['upload']);
+	function factory(){
 		if(!$this->tmpdir) $this->tmpdir = ini_get("upload_tmp_dir") . DS . "plupload". DS;
 		if(!is_dir($this->tmpdir)) io::mkdir($this->tmpdir);
-		if(!$this->savepath OR !is_dir($this->savepath)) $this->savepath = UPLOADPATH;
+		if(!$this->savepath OR !is_dir($this->savepath)) $this->savepath = UPLOAD_PATH;
 		if(!is_dir($this->savepath)) io::mkdir($this->savepath);
 		return $this;
 	}
@@ -125,7 +124,7 @@ class Lib_qcupload{
 	function geturl($file){
 		$this->filename = trim(str_replace(array($this->savepath, DS), array('', '/'), realpath($file)), '/');
 		if($this->domain) return trim($this->domain, '/'). "/{$this->filename}";
-		$path = str_replace(DS, '/', str_replace(THISPATH, '', $this->savepath));
+		$path = str_replace(DS, '/', str_replace(THIS_PATH, '', $this->savepath));
 		return gc('env.webroot'). trim($path, '/'). '/'. $this->filename;
 	}
 	function getfile($file){

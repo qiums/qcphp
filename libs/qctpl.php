@@ -119,7 +119,7 @@ class QCtplTags {
 		$const_regexp = "([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)";
         $cont = preg_replace("/(src|href|action)=\"(.[^\"]*)\"/ise", "self::parse_path('\\1', '\\2')", $cont);
         $cont = preg_replace("/(background)=\"(.[^\{\"\<]*)\"/ise", "self::parse_path('background', '\\2')", $cont);
-		$cont = preg_replace('/<form[^>]+?>/is', '\\0<input type="hidden" name="token" value="{$config[env][token]}" />', $cont);
+		$cont = preg_replace('/<form[^>]+?method=\"post\"(.*?)>/is', '\\0<input type="hidden" name="token" value="{$config[env][token]}" />', $cont);
         $cont = preg_replace("/\<\!\-\-\{(.+?)\}\-\-\>/s", "{\\1}", $cont);
 		$cont = preg_replace("/[\n\r\t]*\{(".$var_regexp."\s*\=\s*)*include\s+\'(.+?)\'\}[\n\r\t]*/ies", "self::parse_include('\\5', '\\3')", $cont);
         $cont = str_replace("{LF}", "<?=\"\\n\"?>", $cont);
@@ -147,7 +147,7 @@ class QCtplTags {
 		$cont = str_replace('<?=', '<?php echo ', $cont);
         //$cont = preg_replace("/[\n\r\t]*\{list\s+(.[^\}]+?)\}[\n\r]*(.+?)[\n\r]*{\/list}/ies", "self::parse_block('list','\\1','\\2')", $cont);
 		//$cont = preg_replace("/[\n\r\t]*\{data\s+(.[^\}]+?)\}/ies", "self::parse_block('data','\\1')", $cont);
-		$cont = preg_replace("/([^\$\{])\{widget:(.+?)(=(.+?))*\}/ies", "self::parse_widget('\\1', \\2', '\\4')", $cont);
+		$cont = preg_replace("/([^\$\{])\{widget:(.+?)(=(.+?))*\}/ies", "self::parse_widget('\\1', '\\2', '\\4')", $cont);
         $cont = preg_replace("/([^\$\{])\{(\w+)\s+(.[^=]+?)\}/ies", "self::parse_func('\\1', '\\2','\\3', TRUE)", $cont);
 		$cont = preg_replace("/[\n\r\t]*([^\$\{])\{:(\w+)\s*(.[^\}]+?)\}/ies", "self::parse_func('\\1', '\\2','\\3')", $cont);
 		$cont = str_replace('&amp;', '&', $cont);

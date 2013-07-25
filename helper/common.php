@@ -2,7 +2,7 @@
 
 function __autoload($class){
 	if (!$class OR !is_scalar($class)) return ;
-	$dir = gc('env.directory');
+	$dir = gc('env.groupdir');
 	$ctrl_suffix = gc('base.controller_suffix');
 	$model_suffix = gc('base.model_suffix');
 	if (FALSE !== strpos($class, $ctrl_suffix)){

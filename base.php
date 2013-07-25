@@ -31,7 +31,7 @@ header("Content-Type:text/html; charset=". gc('base.charset'));
 header('P3P: CP="CAO PSA OUR"');
 $_ENV['ajaxreq'] = request::req('ajax', FALSE, 'XMLHttpRequest'===request::server('HTTP_X_REQUESTED_WITH'));
 if ($_ENV['ajaxreq']){
-	$_ENV['datatype'] = request::req('ajaxget', 'json');
+	$_ENV['datatype'] = is_bool($_ENV['ajaxreq']) ? 'json' : $_ENV['ajaxreq'];//request::req('ajaxget', 'json');
 	header("Cache-Control: no-store, no-cache, must-revalidate");
 	header("Content-Type:text/{$_ENV['datatype']}; charset=utf-8");
 }
@@ -231,7 +231,8 @@ class controller extends Base{
 			}else{
 				$gzip = gc('base.gzip_output');
 				if ($gzip AND function_exists('ob_gzhandler')) {
-					if (!headers_sent()) ob_start("ob_gzhandler");
+					ob_end_clean();
+					ob_start("ob_gzhandler");
 				}
 				require $this->tpl->view($file);
 			}
@@ -299,7 +300,7 @@ class Loader {
 		$base = Base::getInstance();
 		$base->$name = getInstance($class);
 		$this->_assign_params($base->$name, gc($name));
-		if (method_exists($base->$name, 'factory')) $base->$name->factory($params);
+		if (method_exists($base->$name, 'factory')) $base->$name->factory(gc($name));
 		return $base->$name;
 	}
 	public function database(){
@@ -328,8 +329,8 @@ class Loader {
 		}else{
 			return FALSE;
 		}
-		if (method_exists($base->$name, 'factory')) $base->$name->init($params);
 		$this->_assign_params($base->$name, gc($name));
+		if (method_exists($base->$name, 'factory')) $base->$name->factory(gc($name));
 		$_ENV['libs'][$cache_key] = $name;
 		return $base->$name;
 	}
