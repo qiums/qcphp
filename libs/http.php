@@ -57,6 +57,10 @@ class Lib_http{
 			curl_setopt($ch, CURLOPT_POST, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $formdata);
 		}
+		$useragent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)";
+		$header = array('Accept-Language: zh-cn','Connection: Keep-Alive','Cache-Control: no-cache'); 
+		curl_setopt($ch, CURLOPT_HTTPHEADER,$header);  //模拟浏览器的头信息
+		curl_setopt($ch, CURLOPT_USERAGENT, $useragent);  //模拟浏览器的信息
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);

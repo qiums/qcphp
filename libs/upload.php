@@ -157,14 +157,16 @@ class Lib_upload{
 	function get_remote($url){
 		if (!preg_match('/^http:\/\/(.*)\.(gif|jpg|jpeg|bmp|png)$/is',$url)) return $url;
 		$new = $this->getfile($url);
-		ob_start();
+		$size = file_put_contents($new, Base::getInstance()->http->send($url));
+		if (!$size) return $url;
+		/*ob_start();
 		if (!@readfile($url)) return array();
 		$img = ob_get_contents();
 		ob_end_clean();
 		$size = strlen($img);
 		$fp=@fopen($new, "a");
 		fwrite($fp,$img);
-		fclose($fp);
+		fclose($fp);*/
 		return $this->output(array(
 				'fileurl'=>$this->geturl($new),
 				'filepath'=>$new,

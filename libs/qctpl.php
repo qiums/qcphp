@@ -162,13 +162,10 @@ class QCtplTags {
 	static private function multi_tags($m, $cont){
 		if (!$m[0]) return $cont;
 		foreach($m[0] as $k=>$v){
-			$cont = str_ireplace($v,self::parse_block($m[1][$k], strtolower($m[2][$k])), $cont);
+			$cont = str_ireplace($v,self::parse_block($m[1][$k], strtolower($m[2][$k])). ($m[1][$k]==='data' ? '?>' : ''), $cont);
 			$cont = str_ireplace('{/'.$m[1][$k].'}', '<?php endforeach; endif; ?>', $cont);
 		}
 		return $cont;
-	}
-	static private function check_error($a, $b, $msg){
-		if($a!=$b) show_error('The tags ['.$msg.'] is fail!');
 	}
 	static private function parse_block($type, $params){
 		$params = self::explode_str(self::replace_vars($params));
@@ -229,8 +226,8 @@ class QCtplTags {
 		return $attr.'="'.$path.'"';
     }
 	static private function parse_widget($name, $args){
-		$name = '<?php $this->widget->'. str_replace('/', '->', $name);
-		if ($args) $name .= "({$args})";
+		$name = '<?php $this->widget->'. str_replace('/', '->', $name). '('.(string)$args.')';
+		//if ($args) $name .= "({$args})";
 		return "{$name}; ?>";
 	}
 	static private function parse_quote($var, $all=1){

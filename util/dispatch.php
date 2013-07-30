@@ -167,7 +167,10 @@ class Dispatch{
 	static public function url($paths, $args=array()){
 		if(preg_match('/^(http|ftp|https)\:\/\//', $paths)) return $paths;
 		$dc = gc('dispatch');
-		if ('#current#' === $paths){
+		$use_pathinfo = '#pathinfo#' === $paths;
+		if ($use_pathinfo){
+			$paths = $_ENV['path_info'];
+		}elseif ('#current#' === $paths){
 			$paths = str_replace('//', '/', gc('env.group').'/'.gc('env.directory').'/'.gc('env.controller').'/'.gc('env.action'));
 			if ($_GET) $paths .= '?'. http_build_query($_GET);
 		}elseif ('#back#' === $paths){
@@ -180,7 +183,7 @@ class Dispatch{
 		$url = parse_url($paths);
 		$paths = $url['path'];
 		$tmp = explode('/', $paths);
-		if ($tmp[0]){
+		if (!$use_pathinfo AND $tmp[0]){
 			if (is_dir(CORE_PATH. 'group'. DS. $tmp[0])
 				OR is_dir(CORE_PATH. 'controllers'. DS. $tmp[0])){
 				if ($dc['rename_group'] && FALSE!==($key = array_search($tmp[0], $dc['rename_group'])))
@@ -210,7 +213,7 @@ class Dispatch{
 			if (FALSE!==strpos($val, $depr)) continue;
 			if (!is_null($val) AND ''!==$val){
 				if (strpos($paths, "{$depr}{$key}{$depr}")){
-					$paths = preg_replace("/{$key}\{$depr}(\w[^\{$depr}]+)/is", "{$depr}{$key}{$depr}{$val}", $paths);
+					$paths = preg_replace("/{$key}\\{$depr}(\w[^\\{$depr}]+)/is", "{$key}{$depr}{$val}", $paths);
 				}else{
 					$paths .= "{$depr}{$key}{$depr}{$val}";
 				}

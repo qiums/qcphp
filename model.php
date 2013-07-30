@@ -249,7 +249,7 @@ class model{
 		if ('null'==$value) return '';
 		return $value;
 	}
-	public function block($ac='', $a=''){
+	public function block($ac='', $a='', $fields=array()){
 		if (!$a) return array();
 		if (!is_array($a)) $a = str2array($a);
 		$a = array_map(array($this, 'parse_value'), $a);
@@ -267,7 +267,8 @@ class model{
 				unset($a[$method]);
 			}
 		}
-		return isset($do) ? call_user_func_array(array($this, $do), $a) : $this->where($a)->$ac();
+		if (!$fields) $fields = $a;
+		return isset($do) ? call_user_func_array(array($this, $do), $fields) : $this->where($fields)->$ac();
 	}
 	public function apply_cond($fields=array(), $post=array()){
 		$base = Base::getInstance();

@@ -4,9 +4,9 @@
 * author by Sam <wuyou192@163.com>.
 */
 class Lib_ubb {
-	var $edit = false;
-	var $custom_tags = 'tmp';
-	var $clear_tags = 'script|frame|iframe|object|embed';
+	public $edit = false;
+	public $custom_tags = 'tmp';
+	public $clear_tags = 'script|frame|iframe|object|embed';
 	function callback($matches){
 		return call_user_func(array('UbbTags',"parse"),$matches[1],$str,$matches[$key-1],$this->edit);
 	}

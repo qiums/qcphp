@@ -40,7 +40,7 @@ class Lib_form{
 				if (!$tips) $tips = lang('form_label.'. join('_', $m[1]));
 				$tips = str_replace($m[1], $m[3], $tips);
 			}
-			$form[$true_name] = array(
+			$form[$alias] = array(
 				'label'		=>	'<label for="'.$this->for_id.'" class="control-label">'.
 						(in_array('minlength', $m[1]) ? '<cite>*</cite>':''). $args['label'].'</label>',
 				'ele'		=>	$element,

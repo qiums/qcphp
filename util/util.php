@@ -32,8 +32,8 @@ class qccache {
 		}
 	}
 	function get($path){
-		if (isset($this->file_cache[$path])) return $this->cfiles[$path];
-		$fpath = CACHE_PATH. (!strpos($path, '.php') ? str_replace('.', '/', $path). '.php' : $path);
+		if (isset($this->file_cache[$path])) return $this->file_cache[$path];
+		$fpath = CACHE_PATH. (!strpos($path, '.php') ? str_replace('.', DS, $path). '.php' : $path);
 		if (FALSE !== ($data = io::read($fpath))){
             $headlen = strlen($this->head_string);
             if (TRUE === $this->gzip) $data = gzuncompress($data);
