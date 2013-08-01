@@ -128,8 +128,8 @@ class QCtplTags {
 		$cont = preg_replace("/\{(\\\$[a-zA-Z0-9_\[\]\'\"\$\.\x7f-\xff]+)\}/s", "<?=\\1;?>", $cont);
 		$cont = preg_replace("/$var_regexp/es", "self::parse_quote('\\1')", $cont);
 		$cont = preg_replace("/\<\?\=\<\?\=$var_regexp;\?\>;\?\>/es", "self::parse_quote('\\1')", $cont);
-		$cont = preg_replace("/([\n\r\t]*)\{elseif\s+(.+?)\}([\n\r\t]*)/ies", "self::stripv_tags('\\1<?php elseif(\\3): ?>\\4','')", $cont);
-		$cont = preg_replace("/([\n\r\t]*)\{else\}([\n\r\t]*)/is", "\\1<?php else: ?>\\3", $cont);
+		$cont = preg_replace("/([\n\r\t]*)\{elseif\s+(.+?)\}([\n\r\t]*)/ies", "self::stripv_tags('\\1<?php elseif(\\2): ?>\\3','')", $cont);
+		$cont = preg_replace("/([\n\r\t]*)\{else\}([\n\r\t]*)/is", "\\1<?php else: ?>\\2", $cont);
         /* Loop Parse */
         for($i = 0; $i < 5; $i++) {
 			$cont = preg_replace("/[\n\r\t]*\{loop\s+(\S+)\s+(\S+)\}[\n\r]*(.+?)[\n\r]*\{\/loop\}[\n\r\t]*/ies",

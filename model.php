@@ -205,8 +205,11 @@ class model{
 		unset($sort, $skey);
 		return $this->attr('order', $order);
 	}
-	public function attr($key, $value=NULL){
+	public function attr($key, $value=NULL, $append=FALSE){
 		if (is_null($value) AND isset($this->attr_cache[$key])) return $this->attr_cache[$key];
+		if ($append AND isset($this->attr_cache[$key])){
+			$value = is_array($value) ? array_merge($this->attr_cache[$key], $value) : ($value. (is_bool($append)?'': $append). $this->attr_cache[$key]);
+		}
 		$this->attr_cache[$key] = $value;
 		Db::getInstance()->attr($key, $value);
 		return $this;
@@ -226,7 +229,7 @@ class model{
         $this->attr('on', $on);
 		$this->attr('join', array_keys($this->usetab));
         $this->attr('table', $this->maintab);
-		if ($fields) $this->attr('fields', join(',', $fields));
+		if ($fields) $this->attr('fields', join(',', $fields), ',');
         $this->usetab = array();
         unset($tab, $on);
 		if (!is_null($data)) return $this->parse_data($data);
