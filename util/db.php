@@ -190,13 +190,11 @@ class Db {
 		return $this->insert_id;
 	}
 	public function update($table, $data, $cond=''){
-		$cond AND $this->attr('cond', $cond);
 		$this->attr('updata', $data);
-		return $this->run($this->parse('update', '', $table));
+		return $this->where($cond)->run($this->parse('update', '', $table));
 	}
 	public function delete($table, $cond=''){
-		$cond AND $this->attr('cond', $cond);
-		return $this->run($this->parse('delete', '', $table));
+		return $this->where($cond)->run($this->parse('delete', '', $table));
 	}
 	public function attr($key, $value='', $append=FALSE){
 		if (is_array($key)){

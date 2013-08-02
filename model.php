@@ -123,7 +123,7 @@ class model{
 		$join = $this->attr_cache['join'];
 		$on = $this->attr_cache['on'];
 		$this->attr('join', '')->attr('on', '');
-		if (!$this->db()->update($this->maintab, $data['data'], $cond)) return FALSE;
+		if (!$this->db()->where($cond)->update($this->maintab, $data['data'])) return FALSE;
 		if ($data['sub'] AND $join){
 			foreach ($join as $tab){
 				$tab = basename(str_replace('.', '/', $tab));
@@ -149,6 +149,8 @@ class model{
 		$id = $this->db()->insert($this->maintab, $data['data'], $duplicat, $noid);
 		if ($data['data']['id']) $id = $data['data']['id'];
 		if ($id AND $join){
+			$on = $this->attr_cache['on'];
+			$this->attr('on', '');
 			foreach ($join as $tab){
 				if (FALSE !== ($index = strpos($tab, '.'))){
 					$pk = substr($tab, $index+1);
@@ -161,7 +163,7 @@ class model{
 					$sdata = $data['sub'];
 				}
 				if (!$pk AND !$sdata) continue;
-				$in = array_merge($sdata, array($pk => $id));
+				$in = array_merge($sdata, (array)$on[$tab], $pk ? array($pk => $id) : array());
 				$this->db()->insert($tab, $in);
 			}
 			unset($sdata, $in);
@@ -175,7 +177,7 @@ class model{
 	}
 	public function delete($cond=''){
 		$this->before();
-		return $this->db()->delete($this->maintab, $cond);
+		return $this->db()->where($cond)->delete($this->maintab);
 	}
 	public function join($tab, $fields='*', $on=''){
 		$this->usetab[$tab] = array($fields, $on);
