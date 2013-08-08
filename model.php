@@ -122,11 +122,11 @@ class model{
 		if (!($data = $this->before($data))) return FALSE;
 		$join = $this->attr_cache['join'];
 		$on = $this->attr_cache['on'];
-		$this->attr('join', '')->attr('on', '');
+		$this->attr('join', '')->attr('on', '');//dump($join);dump($on);die;
 		if (!$this->db()->where($cond)->update($this->maintab, $data['data'])) return FALSE;
 		if ($data['sub'] AND $join){
 			foreach ($join as $tab){
-				$tab = basename(str_replace('.', '/', $tab));
+				$tab = qstrstr($tab, '.', TRUE);
 				if (!$on[$tab]) continue;
 				if (isset($data['sub'][$tab])){
 					$sdata = $data['sub'][$tab];
@@ -152,10 +152,12 @@ class model{
 			$on = $this->attr_cache['on'];
 			$this->attr('on', '');
 			foreach ($join as $tab){
-				if (FALSE !== ($index = strpos($tab, '.'))){
+				/*if (FALSE !== ($index = strpos($tab, '.'))){
 					$pk = substr($tab, $index+1);
 					$tab = substr($tab, 0, $index);
-				}
+				}*/
+				$tab = qstrstr($tab, '.', TRUE);
+				$pk = qstrstr($tab, '.');
 				if (isset($data['sub'][$tab])){
 					$sdata = $data['sub'][$tab];
 					unset($data['sub'][$tab]);
@@ -222,7 +224,7 @@ class model{
 		if (!$this->attr_cache['fields']) $fields = array('*');
         foreach ($this->usetab as $tab=>$one){
             if (!$one) continue;
-			$tab = substr($tab, 0, strpos($tab, '.'));
+			$tab = qstrstr($tab, '.', TRUE);//substr($tab, 0, strpos($tab, '.'));
 			if (!is_null($one[0])) $fields[] = "{$tab}.". str_replace(',', ",{$tab}.", $one[0]);
 			if (isset($one[1])){
 				$on[$tab] = $one[1];

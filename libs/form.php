@@ -314,8 +314,8 @@ class Lib_form{
 		foreach ($result as $val){
 			$len = strlen($val);
 			if (!$min[1] AND !$len) continue;
-			if (($min[1] AND $len<=$min[1])
-				OR ($max[1] AND $len>=$max[1])
+			if (($min[1] AND $len<$min[1])
+				OR ($max[1] AND $len>$max[1])
 				OR ($req[1] AND isset($rules[$req[1]])
 					AND !preg_match('/'.$rules[$req[1]].'/is', $val))
 				) return $tip;

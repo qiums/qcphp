@@ -399,7 +399,7 @@ class qcdate {
 	}
 	static public function timestamp($str=''){
 		if (empty($str)) return self::get('curtime');
-        if (is_int($str)) return $str;
+        if (is_float($str)) return $str;
 		return strtotime($str)/*-self::get('time_offset')*3600*/;
 	}
 	static public function add($interval, $number=0, $z=FALSE){

@@ -185,7 +185,10 @@ class Db {
 		return $data['total'];
     }
 	public function insert($table, $data, $dup=''){
-		$dup AND $this->attr('updata', $dup);
+		if ($dup){
+			$dup[$this->pk] = 'LAST_INSERT_ID()';
+			$this->attr('updata', $dup);
+		}
 		$this->run($this->parse('insert', $data, $table));
 		return $this->insert_id;
 	}
@@ -255,12 +258,7 @@ class Db {
 		$fields = array_keys($this->dbattr['data']);
         $sql = "INSERT INTO {$this->dbattr['table']} (".join(', ',$fields).") VALUES (". join(', ', array_values($this->dbattr['data'])).")";
 		if ($this->dbattr['updata']){
-			$sql .= " ON DUPLICATE KEY UPDATE ";
-			if (!$this->dbattr['noid']){
-				$pk = DbUtil::parse_field("{$this->attr['table']}.{id}");
-				$sql .= "{$pk} = LAST_INSERT_ID(), ";
-			}
-			$sql .= $this->dbattr['updata'];
+			$sql .= " ON DUPLICATE KEY UPDATE ". $this->dbattr['updata'];
 		}//echo $sql;
 		return $sql;
 	}
@@ -677,11 +675,13 @@ class DbUtil{
 		$prefix = Db::getInstance()->dbconf['prefix'];
         foreach ($data as $key=>$val){
 			if (FALSE!==($index = strpos($key, '.'))) $table[] = substr($key, $index+1);
+			//$table[] = basename(str_replace('.', '/', $key));
 		}
 		$table = array_unique($table);
-		foreach ($table as $key=>$tbl){
+		foreach ($table as $tbl){
 			$table[$tbl] = self::table_fields($tbl);
-		}//dump($table);
+		}
+		$fn = 'LAST_INSERT_ID()';
 		foreach ($data as $key=>$val){
 			$tbl = current($table);
 			if (FALSE!==($index = strpos($key, '.'))){
@@ -694,7 +694,7 @@ class DbUtil{
 				continue;
 			}
 			$key = self::parse_field("{$prefix}{$tbl}.{$key}");
-			$data[$key] = self::parse_value($val);
+			$data[$key] = ($val AND strpos($fn, $val)!==FALSE) ? $val : self::parse_value($val);
 		}
 		return $data;
     }
