@@ -244,14 +244,24 @@ class Lib_form{
 			}
 		}
 		$data = array_intersect_key($data, $rules);
+		$add = array();//dump($rules);die;
 		foreach ($data as $key=>$value){
 			$rule = $rules[$key];
 			if (''===$value AND $rule['value']){
 				$value = $rule['value'];
 				if ('[now]'==$value) $value = D::cdate();//D::get('curtime');
 			}
+			if ($rule['map']){
+				if (FALSE!==($index=strpos($rule['map'],'.'))){
+					$rule['map'] = 'sd_'.substr($rule['map'], $index+1);
+				}
+				if (isset($rules[$rule['map']])){
+					$map = $rules[$rule['map']];
+					$add[$rule['map']] = $map['pattern'] ? str_replace(':', $value, $map['pattern']) : $value;
+				}
+			}
 			if ($rule['alias'])
-				$data[$rule['alias']] = $value;
+				$add[$rule['alias']] = $value;
 			if (TRUE !== ($res = $this->vali_rule($key, $value, $rule['attr']))){
 				list($tag, $type) = explode(':', "{$rule['type']}:ele");
 				$prefix = (FALSE!==strpos('select,textarea', $tag) ? $tag : str_replace(':', '-', $type));
@@ -272,6 +282,7 @@ class Lib_form{
 			}
 		}
 		if (!empty($this->err)) return FALSE;
+		$data += $add;
 		return $data;
 	}
 	private function vali_rule($key, &$value, $rule){
