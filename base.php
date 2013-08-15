@@ -85,9 +85,11 @@ class Boot{
 		if ($_ENV['iscp']){
 			$_class = "com_{$class}";
 			if (!import("com.{$class}.controller")) show_404("Not load components controller({$class}).");
+			$ac = trim(gc('env.groupdir'). "_{$ac}", '_');
 		}elseif (!import("ctrl.{$file}")){
 			show_404("Not found controller({$file}) file.");
 		}
+		$_ENV['ctrl_dir'] = dirname($_ENV['auto_load'] ? current(array_slice($_ENV['import'], -2, 1)) : end($_ENV['import'])). DS;
 		$suffix = gc('base.controller_suffix');
 		if (!class_exists($_class.$suffix)){
 			$_class = $class;
@@ -222,7 +224,10 @@ class controller extends Base{
 			$G = $this->qdata;
 			unset($_POST);
 			extract($this->vars);
-			if ($_ENV['iscp']) $file = "cp/". gc('env.controller')."/{$file}";
+			if ($_ENV['iscp']){
+				$_ENV['item_view'] = $_ENV['ctrl_dir']. 'views'. DS;
+				$this->tpl->cachepath = CACHE_PATH. 'views'.DS. 'cp'. DS;
+			}
 			if ($return){
 				ob_start();
 				require $this->tpl->view($file);//
@@ -381,12 +386,13 @@ class components {
 		if (isset($_ENV['components'][$cache_key])) return $this->$name;
 		$file = strtolower($class). gc("base.model_suffix");
 		$_class = "com_{$file}";
+		if (is_file(import("com.{$class}.!enable"))) return FALSE;
 		if (!import("com.{$class}.{$file}")){
 			if (!import("com.{$class}.model")) return FALSE;
 		}
 		$this->$name = new $_class();
 		if (is_file($file = import("com.{$class}.config", TRUE))){
-			global $config;
+			global $config, $lang;
 			require $file;
 			$this->$name->config = gc($name);
 			unset($file);

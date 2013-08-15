@@ -37,7 +37,7 @@ class Lib_qctpl {
 			if (is_file($rootview. $file)) return $rootview. $file;
 			$file = str_replace('public/', '', $file);
 		}
-		$groupview = $itemview = (defined('ITEM_VIEW') ? ITEM_VIEW : $rootview);
+		$groupview = $itemview = ($_ENV['item_view'] ? $_ENV['item_view'] : $rootview);
 		$fullview = rtrim($itemview. $this->theme.DS, DS). DS;
 		if ($this->dir){
 			if (defined('GROUP_PATH')) $groupview = GROUP_PATH. 'views'. DS;

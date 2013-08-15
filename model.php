@@ -73,7 +73,7 @@ class model{
 		return Db::getInstance($ac);
 	}
 	public function callback($fn='build'){
-		if (method_exists($this, $fn)) $this->db()->callback = array($this, $fn);//$this->attr($method, array($this, $fn));
+		if (method_exists($this, $fn)) $this->db()->callback = array($this, $fn);
 		return $this;
 	}
 	public function limit($limit){

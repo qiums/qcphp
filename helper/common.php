@@ -11,6 +11,7 @@ function __autoload($class){
 			if (!import("ctrl.{$class}"))
 				show_404("Not found controller({$class}) file.");
 		}
+		$_ENV['auto_load'] = end($_ENV['import']);
 	}elseif (FALSE !== strpos($class, $model_suffix)){
 		$class = str_replace($model_suffix, '', $class);
 		if (!import("model.{$class}")){
