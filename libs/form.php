@@ -41,8 +41,8 @@ class Lib_form{
 				$tips = str_replace($m[1], $m[3], $tips);
 			}
 			$form[$alias] = array(
-				'label'		=>	'<label for="'.$this->for_id.'" class="control-label">'.
-						(in_array('minlength', $m[1]) ? '<cite>*</cite>':''). $args['label'].'</label>',
+				'label'		=>	empty($args['label']) ? '' : ('<label for="'.$this->for_id.'" class="control-label">'.
+						(in_array('minlength', $m[1]) ? '<cite>*</cite>':''). $args['label'].'</label>'),
 				'ele'		=>	$element,
 				'tips'		=>	empty($tips) ? '' : '<span class="help-block">'.$tips.'</span>',
 			);

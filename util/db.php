@@ -224,7 +224,7 @@ class Db {
 	public function where($key, $value=''){
 		if (!$key AND !$value) return $this;
 		if (!is_array($key)) $key = array($key=>$value);
-		return $this->attr('cond', $key);
+		return $this->attr('cond', array_merge((array)$this->dbattr['cond'], $key));
 	}
 	public function order($order=NULL, $way='ASC'){
 		if (!$way) $way = 'ASC';
