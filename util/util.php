@@ -661,10 +661,10 @@ class response{
 			'message' => $message,
 			'body' => $data,
 		);
-		if ('json' === $_ENV['datatype']){
+		if ('json' === $_ENV['ajaxreq']){
 			echo json_encode($data);
 			exit;
-		} elseif ('xml' == $_ENV['datatype']) {
+		} elseif ('xml' == $_ENV['ajaxreq']) {
 			echo Base::getInstance()->load->libs('xml')->build($data);
 		}else{
 			$file = Base::getInstance()->tpl->view('show_message');

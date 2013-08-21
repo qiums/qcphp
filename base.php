@@ -24,17 +24,18 @@ $_ENV = array();
 require SYS_PATH. 'helper'.DS.'common.php';
 import('util');
 import('config');
-if ('debug'==$config['base']['run_mode']&&function_exists('ini_set')) @ini_set('display_errors','on');
+if ('debug'===$config['base']['run_mode']&&function_exists('ini_set')) @ini_set('display_errors','on');
 error_reporting('debug'==$config['base']['run_mode'] ? E_ALL ^ E_NOTICE ^ E_STRICT : 0);
 // Headers
 header("Content-Type:text/html; charset=". gc('base.charset'));
 header('P3P: CP="CAO PSA OUR"');
 $_ENV['ajaxreq'] = request::req('ajax', FALSE, 'XMLHttpRequest'===request::server('HTTP_X_REQUESTED_WITH'));
 if ($_ENV['ajaxreq']){
-	$_ENV['datatype'] = is_bool($_ENV['ajaxreq']) ? 'json' : $_ENV['ajaxreq'];//request::req('ajaxget', 'json');
+	if (is_bool($_ENV['ajaxreq'])) $_ENV['ajaxreq'] = 'json';
 	header("Cache-Control: no-store, no-cache, must-revalidate");
-	header("Content-Type:text/{$_ENV['datatype']}; charset=utf-8");
+	header("Content-Type:text/{$_ENV['ajaxreq']}; charset=utf-8");
 }
+unset($_GET['ajax'], $_POST['ajax']);
 // PHP version
 $config['env']['phpver'] = phpversion();
 if (!$config['env']['domain']){
@@ -216,7 +217,7 @@ class controller extends Base{
 		//$_ENV['hooks']->callhook('pre_display');
 		Debug::setbm('pre_display');
 		global $config, $lang;
-		if ($_ENV['ajaxreq'] && 'html' !== $_ENV['datatype']){
+		if ($_ENV['ajaxreq'] && 'html' !== $_ENV['ajaxreq']){
 			$this->output();
 		}else{
 			$this->load->helper('extend');
@@ -291,7 +292,6 @@ class Loader {
 		if (class_exists($_class, FALSE)){
 			$_ENV['models'][$cache_key] = $name;
 			$base->$name = new $_class();
-			//$this->_libs_to_models();
 			return $base->$name;
 		}
 		return FALSE;

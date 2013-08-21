@@ -58,8 +58,6 @@ class model{
 			list($key, $name) = explode('/', "{$key}/");
 			$key = ltrim($key, ':');
 			if (!$name) $name = $key;
-			//if (in_array($key, $this->config_cache)) return ;
-			//$this->config_cache[] = $key;
 			if (FALSE === ($config = import("core.group.{$key}.common.config_{$name}"))){
 				if (FALSE === ($config = import("config.{$name}"))) return ;
 			}

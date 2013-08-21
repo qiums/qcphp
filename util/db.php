@@ -118,6 +118,7 @@ class Db {
 		if ($cb) $queryid = &$this->queryid;
 		if (!$queryid) return $result;
 		$func = "fetch_". gc('database.data_type', 'assoc');
+		$i = 1;
 		if ($type===1) {
             if ($queryid->data_seek($seek)) $result = $queryid->$func();
 			$this->cb($result, $cb);
@@ -135,13 +136,17 @@ class Db {
 			if (!$pk) $pk = 'id';
             while($rows = $queryid->$func()){
 				$this->cb($rows, $cb);
+				$rows['list__index'] = $i;
                 $result[$rows[$pk]] = $rows;
+				$i++;
             }
             if ($result) $queryid->data_seek(0);
         }else{
             while($rows = $queryid->$func()){
 				$this->cb($rows, $cb);
+				$rows['list__index'] = $i;
                 $result[] = $rows;
+				$i++;
             }
             if ($result) $queryid->data_seek(0);
         }
@@ -396,7 +401,7 @@ class Db {
 	//on: archives.mid,article.mid,archives.sid,1
 	private function get_join(){
 		if (!$this->dbattr['join']) return $this->attr('join', '');
-		$type = $this->dbattr['jointype'];
+		$type = strtoupper($this->dbattr['jointype']);
 		if (!$type) $type = 'LEFT';
 		$type = " {$type} JOIN ";
 		$on = (array)$this->dbattr['on'];

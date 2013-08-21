@@ -64,7 +64,7 @@ function lang($key=NULL, $data=array()){
 	if(!isset($lang[$key])) return NULL;
 	$a = $lang[$key];
 	if(!is_array($a)){
-		return preg_replace('/\%(.[^\}\]\%]*?)\%/ies', '\$data[\'$1\']', $a);
+		return preg_replace('/(\%|\[)(.+?)(\%|\])/ies', '\$data[\'$2\']', $a);
 	}else{
 		if ($sub){
 			if (isset($a[$sub])) return $a[$sub];
@@ -74,7 +74,7 @@ function lang($key=NULL, $data=array()){
 	}
 	foreach ($a as $key=>$one){
 		if(isset($data[$key])){
-			$a[$key] = preg_replace('/\%(.[^\}\]\%]*?)\%/ies', '\$data[$key][\'$1\']', $one);
+			$a[$key] = preg_replace('/(\%|\[)(.+?)(\%|\])/ies', '\$data[$key][\'$2\']', $one);
 		}
 	}
 	return $a;
