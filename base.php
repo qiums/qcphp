@@ -217,8 +217,8 @@ class controller extends Base{
 		//$_ENV['hooks']->callhook('pre_display');
 		Debug::setbm('pre_display');
 		global $config, $lang;
-		if ($_ENV['ajaxreq'] && 'html' !== $_ENV['ajaxreq']){
-			$this->output();
+		if (!$return && $_ENV['ajaxreq'] && 'html' !== $_ENV['ajaxreq']){
+			$this->output(1, '', $this->vars);
 		}else{
 			$this->load->helper('extend');
 			$config['env']['token'] = formhash();
@@ -303,7 +303,7 @@ class Loader {
 		empty($name) && $name = $class;
 		$class = gc('base.libclass_prefix'). $class;
 		$base = Base::getInstance();
-		$base->$name = getInstance($class);
+		$base->$name = new $class(gc($name));//getInstance($class);
 		$this->_assign_params($base->$name, gc($name));
 		if (method_exists($base->$name, 'factory')) $base->$name->factory(gc($name));
 		return $base->$name;
@@ -328,9 +328,9 @@ class Loader {
 		$subclass = gc('base.subclass_prefix'). $class;
 		$base = Base::getInstance();
 		if (class_exists($subclass)){
-			$base->$name = getInstance($subclass);
+			$base->$name = new $subclass(gc($name));
 		}elseif (class_exists($class)){
-			$base->$name = getInstance($class);
+			$base->$name = new $class(gc($name));
 		}else{
 			return FALSE;
 		}

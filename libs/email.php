@@ -26,6 +26,11 @@
  * @author		ExpressionEngine Dev Team
  * @link		http://codeigniter.com/user_guide/libraries/email.html
  */
+if (!function_exists('is_php')){
+	function is_php($ver){
+		return PHP_VERSION >= $ver;
+	}
+}
 class Lib_email {
 
 	var	$useragent		= "CodeIgniter";

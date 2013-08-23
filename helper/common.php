@@ -32,7 +32,7 @@ function gc($name=NULL, $dvalue=NULL, $config=array()){
 		if ($set){
 			$config[$name][$key] = $dvalue;
 		}else{
-			if ($key){
+			if (isset($key) AND $key){
 				if (isset($config[$name][$key])) return $config[$name][$key];
 				return $dvalue;
 			}

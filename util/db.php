@@ -645,7 +645,6 @@ class Dbsqlite {
 class DbUtil{
 	static $cache_fields=array();
 	static public function parse_field($value, $add=FALSE){
-		$dbconf = Db::getInstance()->dbconf;
 		if (empty($value)) $value = '*';
 		if (FALSE === strpos($value,'`')){
 			if ('*' == trim($value)) return trim($value);
