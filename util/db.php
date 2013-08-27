@@ -51,7 +51,7 @@ class Db {
 	public function connect(){
         extract($this->dbconf, EXTR_PREFIX_ALL,'db');
         if (!$this->active_group[$this->active]){
-            !$db_port AND $db_port = 3306;
+            if (!$db_port) $this->dbconf['port'] = $db_port = 3306;
 			if ('mysqli'==$this->dbinfo['extensions']){
 				$this->dbi = new mysqli($db_host, $db_user, $db_pwd, $db_name, $db_port);
 				if (!$this->dbi->connect_error) $this->dbi->linkid = TRUE;
@@ -86,7 +86,7 @@ class Db {
 		$this->dbinfo['query_count']++;
 		$this->dbinfo['sql'][] = $sql. ' ('. (microtime_float()-$time). ')';
 		if (!$this->dbattr['found'] && is_object($this->queryid)) {
-			$this->data_count = $this->dbi->num_rows;
+			$this->data_count = $this->queryid->num_rows;
 		}elseif ($this->dbattr['found']){
 			$queryid = $this->dbi->query('SELECT FOUND_ROWS() AS `total`');
 			$data = $this->result(1, 0, $queryid);
@@ -120,7 +120,7 @@ class Db {
 		$func = "fetch_". gc('database.data_type', 'assoc');
 		$i = 1;
 		if ($type===1) {
-            if ($queryid->data_seek($seek)) $result = $queryid->$func();
+            if ($queryid->num_rows>0 AND $queryid->data_seek($seek)) $result = $queryid->$func();
 			$this->cb($result, $cb);
         }elseif ($type === 2) {
             while($rows = $queryid->$func()){
@@ -130,7 +130,7 @@ class Db {
                     $result[$name][] = $val;
                 }
             }
-            if ($result) $queryid->data_seek(0);
+            if ($queryid->num_rows>0) $queryid->data_seek(0);
         }elseif (3 === $type) {
 			$pk = $this->dbattr['pk'];
 			if (!$pk) $pk = 'id';
@@ -140,7 +140,7 @@ class Db {
                 $result[$rows[$pk]] = $rows;
 				$i++;
             }
-            if ($result) $queryid->data_seek(0);
+            if ($queryid->num_rows>0) $queryid->data_seek(0);
         }else{
             while($rows = $queryid->$func()){
 				$this->cb($rows, $cb);
@@ -148,7 +148,7 @@ class Db {
                 $result[] = $rows;
 				$i++;
             }
-            if ($result) $queryid->data_seek(0);
+            if ($queryid->num_rows>0) $queryid->data_seek(0);
         }
         $queryid->free();
         return $result;
@@ -264,7 +264,7 @@ class Db {
         $sql = "INSERT INTO {$this->dbattr['table']} (".join(', ',$fields).") VALUES (". join(', ', array_values($this->dbattr['data'])).")";
 		if ($this->dbattr['updata']){
 			$sql .= " ON DUPLICATE KEY UPDATE ". $this->dbattr['updata'];
-		}//echo $sql;
+		}
 		return $sql;
 	}
 	private function parse_select(){
@@ -489,10 +489,12 @@ class Db {
 }
 class MysqlQuery{
 	private $queryid;
+	public $num_rows = 0;
 
 	public function MysqlQuery($queryid){
 		if (!is_resource($queryid)) return $queryid;
 		$this->queryid = $queryid;
+		$this->num_rows = mysql_num_rows($queryid);
 		return $queryid;
 	}
 	public function fetch_assoc(){
@@ -502,6 +504,7 @@ class MysqlQuery{
 		return mysql_fetch_object($this->queryid);
 	}
 	public function data_seek($seek=0){
+		if (!$this->queryid) return ;
 		return mysql_data_seek($this->queryid, $seek);
 	}
 	public function free(){
@@ -522,7 +525,7 @@ class Dbmysql{
 
 	public function Dbmysql($dbconf){
 		$this->dbconf = $dbconf;
-		$this->linkid = mysql_connect($dbconf['host'].":".$dbconf['port'], $db['user'], $db['pwd']);
+		$this->linkid = mysql_connect($dbconf['host'].":".$dbconf['port'], $dbconf['user'], $dbconf['pwd']);
 		$this->server_info = mysql_get_server_info($this->linkid);
 		return $this;
 	}
@@ -547,10 +550,8 @@ class Dbmysql{
 			return FALSE;
 		}
 		$this->insert_id = mysql_insert_id($this->linkid);
-		if (!$this->iud){
-			$this->num_rows = mysql_num_rows($this->queryid);
-		}else{
-			$this->affected_rows = mysql_affected_rows($this->queryid);
+		if (is_resource($queryid) AND $this->iud){
+			$this->affected_rows = mysql_affected_rows($queryid);
 		}
 		return new MysqlQuery($queryid);
 	}
@@ -635,7 +636,6 @@ class Dbsqlite {
 		if ($matches){
 			return sqlite_fetch_column_types($matches[1], $this->linkid, SQLITE_ASSOC);
 		}
-		// 获取数据库大小
 		if (FALSE!==strpos($sql, 'SHOW TABLES')){
 			return filesize($this->dbconf['name']);
 		}

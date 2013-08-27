@@ -65,7 +65,7 @@ class Lib_qctpl {
 			$rootview. 'public'.DS.$file,
 			dirname($rootview).DS.'public'.DS.$file,
 			)) as $tplfile){//echo $tplfile.'<br/>';
-			if (is_file($tplfile)) break;
+			if (file_exists($tplfile) AND is_file($tplfile)) break;
 		}
 		if (!is_file($tplfile)) return FALSE;
 		return $tplfile;

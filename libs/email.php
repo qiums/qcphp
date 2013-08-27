@@ -88,7 +88,7 @@ class Lib_email {
 	 *
 	 * The constructor can be passed an array of config values
 	 */
-	public function __construct($config = array())
+	public function factory($config = array())
 	{
 		if (count($config) > 0)
 		{

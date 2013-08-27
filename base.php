@@ -303,7 +303,7 @@ class Loader {
 		empty($name) && $name = $class;
 		$class = gc('base.libclass_prefix'). $class;
 		$base = Base::getInstance();
-		$base->$name = new $class(gc($name));//getInstance($class);
+		$base->$name = getInstance($class);
 		$this->_assign_params($base->$name, gc($name));
 		if (method_exists($base->$name, 'factory')) $base->$name->factory(gc($name));
 		return $base->$name;
@@ -328,9 +328,9 @@ class Loader {
 		$subclass = gc('base.subclass_prefix'). $class;
 		$base = Base::getInstance();
 		if (class_exists($subclass)){
-			$base->$name = new $subclass(gc($name));
+			$base->$name = getInstance($subclass);
 		}elseif (class_exists($class)){
-			$base->$name = new $class(gc($name));
+			$base->$name = getInstance($class);
 		}else{
 			return FALSE;
 		}
