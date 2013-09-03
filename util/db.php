@@ -299,11 +299,11 @@ class Db {
 				continue;
 			}elseif (preg_match('/[\|\&]{1}/is', $key)){
 				$tmp = preg_split('/[\|\&]{1}/', $key);
-				$lo = FALSE!==strpos($key, '|') ? 'or' : 'and';
 				foreach ($tmp as $name){
-					$where[] = $this->parse_where(array($name=>$val));
+					$c[$name] = $val;
 				}
-				unset($tmp, $name);
+				$where[] = $this->parse_where($c, FALSE!==strpos($key, '|') ? 'or' : 'and');
+				unset($tmp, $c, $name);
 				continue;
 			}elseif (is_numeric($key) AND is_scalar($val) OR is_null($key)){
 				continue;

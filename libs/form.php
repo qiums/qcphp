@@ -257,7 +257,15 @@ class Lib_form{
 				}
 				if (isset($rules[$rule['map']])){
 					$map = $rules[$rule['map']];
-					$add[$rule['map']] = $map['pattern'] ? str_replace(':', $value, $map['pattern']) : $value;
+					if ($map['pattern']){
+						$tmp = explode(',', $value);
+						foreach ($tmp as &$val){
+							$val = str_replace(':', $val, $map['pattern']);
+						}
+						$add[$rule['map']] = join(' ', $tmp);
+					}else{
+						$add[$rule['map']] = $value;
+					}
 				}
 			}
 			if ($rule['alias'])
@@ -286,11 +294,16 @@ class Lib_form{
 		return $data;
 	}
 	private function vali_rule($key, &$value, $rule){
+		preg_match('/data-depr="(.+?)"/i', $rule, $depr);
+		if ($depr AND $depr[1] AND $value AND FALSE!==strpos($value, $depr[1])){
+			$value = explode($depr[1], $value);
+		}
 		if (is_array($value)){
+			$depr = ($depr AND $depr[1]) ? $depr[1] : ',';
 			foreach ($value as $val){
 				if(TRUE !== $this->vali_rule($key,$val,$rule)) return FALSE;
 			}
-			$value = join(',', $value);
+			$value = join($depr, $value);
 			return TRUE;
 		}
 		if (empty($value) AND (!preg_match('/(req\-|min\d+|\/maxlength\/)/is', $rule)
@@ -314,7 +327,7 @@ class Lib_form{
 			'cnphone'=>"(^(800|400)[\\-]*[0-9]{7,8}$)|(^0[1-9]{1}[0-9]{1,2}[\\-]*[2-8]{1}[0-9]{6,7}(\\-\\d+)*$)|(^[2-8]{1}[0-9]{6,7}(\\-\\d+)*$)|(^[0]?1[3458]{1}[0-9]{9}$)",
 			'enword'=>"^[a-z]+$",
 			'string'=>"^[a-z0-9\\-_]+$",
-			'num'=>"^[0-9]+$",
+			'num'=>"^[0-9]+(\.?[0-9]+)?$",
 			'any'=>"^[\\s\\S]+$"
 		);
 		preg_match_all('/req\-(\w+)|minlength(\d+)|maxlength="(\d+)"/i', $rule, $matches);

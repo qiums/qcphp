@@ -150,12 +150,8 @@ class model{
 			$on = $this->attr_cache['on'];
 			$this->attr('on', '');
 			foreach ($join as $tab){
-				/*if (FALSE !== ($index = strpos($tab, '.'))){
-					$pk = substr($tab, $index+1);
-					$tab = substr($tab, 0, $index);
-				}*/
-				$tab = qstrstr($tab, '.', TRUE);
 				$pk = qstrstr($tab, '.');
+				$tab = qstrstr($tab, '.', TRUE);
 				if (isset($data['sub'][$tab])){
 					$sdata = $data['sub'][$tab];
 					unset($data['sub'][$tab]);
@@ -307,7 +303,7 @@ class model{
 				if (!isset($post[$search[0]])) continue;
 				$val = $post[$search[0]];
 				if ($search[2] AND $search[2]==='m' AND strlen($val)>4){
-					$cond[join(',', $key)] = array('match', $val);
+					$cond[join(',', $key)] = array('match', $val.(isset($search[3])?$search[3]:''));
 				}else{
 					$cond[join($logic, $key)] = "LIKE %{$val}%";
 				}
